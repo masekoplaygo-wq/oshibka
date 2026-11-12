@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ОШИБКА</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: #000;
+    color: #fff;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    padding: 24px;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .stage {
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #msg {
+    margin: 0;
+    color: #ff0033;
+    font-size: clamp(2rem, 11vw, 5rem);
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.05;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity .18s ease, transform .28s cubic-bezier(.2, 1.6, .4, 1);
+    text-shadow: 0 0 18px rgba(255, 0, 51, .85), 0 0 60px rgba(255, 0, 51, .45);
+  }
+
+  #msg.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  #msg.small {
+    font-size: clamp(1.15rem, 6.4vw, 2.6rem);
+  }
+
+  .btn {
+    position: relative;
+    border: 0;
+    cursor: pointer;
+    padding: 22px 56px;
+    border-radius: 18px;
+    background: #e00024;
+    color: #fff;
+    font-family: inherit;
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    box-shadow: 0 0 0 2px #ff2b4a inset, 0 12px 40px rgba(224, 0, 36, .5);
+    transition: transform .1s ease, background .2s ease, box-shadow .2s ease;
+  }
+
+  .btn:hover { background: #ff0033; }
+  .btn:active { transform: scale(.95); }
+  .btn:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+
+  .btn.shake {
+    animation: shake .42s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    15% { transform: translateX(-10px) rotate(-2deg); }
+    30% { transform: translateX(9px) rotate(2deg); }
+    45% { transform: translateX(-7px) rotate(-1.5deg); }
+    60% { transform: translateX(6px) rotate(1.5deg); }
+    80% { transform: translateX(-3px) rotate(-.5deg); }
+  }
+
+  .glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 45%, rgba(255, 0, 51, .16), transparent 62%);
+    opacity: 0;
+    transition: opacity .4s ease;
+  }
+
+  .glow.on { opacity: 1; }
+
+  body.flash { animation: flash .35s ease; }
+
+  @keyframes flash {
+    0% { background: #1a0006; }
+    100% { background: #000; }
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 18px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #3a3a3a;
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow" id="glow"></div>
+
+<div class="stage">
+  <h1 id="msg" aria-live="assertive"></h1>
+</div>
+
+<button class="btn" id="btn" type="button">Нажать</button>
+
+<div class="hint">не нажимай</div>
+
+<script>
+  const TARGET = "https://gareevemil12.github.io/maksim-osvobozhdenie/";
+  const MESSAGES = [
+    "ОШИБКА",
+    "ну сказано же было ОШИБКА!"
+  ];
+
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btn");
+  const glow = document.getElementById("glow");
+
+  let clicks = 0;
+
+  function render(index) {
+    msg.classList.remove("show", "small");
+    // force reflow so the animation replays on every click
+    void msg.offsetWidth;
+    msg.textContent = MESSAGES[index];
+    msg.classList.toggle("small", index === 1);
+    msg.classList.add("show");
+    glow.classList.add("on");
+    document.body.classList.remove("flash");
+    void document.body.offsetWidth;
+    document.body.classList.add("flash");
+  }
+
+  function shake() {
+    btn.classList.remove("shake");
+    void btn.offsetWidth;
+    btn.classList.add("shake");
+  }
+
+  btn.addEventListener("click", () => {
+    clicks += 1;
+
+    if (clicks <= MESSAGES.length) {
+      render(clicks - 1);
+      shake();
+      return;
+    }
+
+    // третий клик — уходим по ссылке
+    msg.textContent = "ПЕРЕХОД...";
+    window.location.href = TARGET;
+  });
+</script>
+
+</body>
+</html>

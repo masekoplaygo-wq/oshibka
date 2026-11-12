@@ -2,32 +2,70 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ОШИБКА</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>ОШИБКА — 1000 нажатий</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+  :root { --tint: 0; }
+
+  html, body { height: 100%; margin: 0; }
 
   body {
-    background: #000;
+    background:
+      radial-gradient(circle at 50% 42%,
+        rgba(255, 0, 51, calc(var(--tint) * 0.45)),
+        transparent 65%),
+      #000;
     color: #fff;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 48px;
-    padding: 24px;
+    gap: 26px;
+    padding: 20px 18px 60px;
     overflow: hidden;
     user-select: none;
+    transition: background .5s ease;
   }
 
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #6a6a6a;
+  }
+
+  .mute {
+    display: none;
+    border: 1px solid #55202a;
+    background: rgba(255, 0, 51, .08);
+    color: #ff8090;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .mute.on { display: block; }
+  .mute:active { transform: scale(.96); }
+
   .stage {
-    min-height: 140px;
+    min-height: 150px;
+    max-width: 720px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,94 +75,138 @@
   #msg {
     margin: 0;
     color: #ff0033;
-    font-size: clamp(2rem, 11vw, 5rem);
+    font-size: clamp(1.9rem, 10.5vw, 4.6rem);
     font-weight: 900;
-    letter-spacing: 0.06em;
+    letter-spacing: .05em;
     text-transform: uppercase;
-    line-height: 1.05;
+    line-height: 1.06;
     opacity: 0;
-    transform: scale(0.6);
-    transition: opacity .18s ease, transform .28s cubic-bezier(.2, 1.6, .4, 1);
-    text-shadow: 0 0 18px rgba(255, 0, 51, .85), 0 0 60px rgba(255, 0, 51, .45);
+    transform: scale(.6) rotate(-1.5deg);
+    transition: opacity .18s ease, transform .3s cubic-bezier(.2, 1.7, .4, 1);
+    text-shadow: 0 0 18px rgba(255, 0, 51, .9), 0 0 62px rgba(255, 0, 51, .5);
   }
 
-  #msg.show {
-    opacity: 1;
-    transform: scale(1);
-  }
+  #msg.show { opacity: 1; transform: scale(1) rotate(0); }
 
   #msg.small {
-    font-size: clamp(1.15rem, 6.4vw, 2.6rem);
+    font-size: clamp(1.02rem, 5.4vw, 2.2rem);
+    letter-spacing: .02em;
+    text-shadow: 0 0 14px rgba(255, 0, 51, .8);
+  }
+
+  #msg.ending {
+    font-size: clamp(1.5rem, 7.6vw, 3.4rem);
+    text-transform: none;
+    letter-spacing: .02em;
+    text-shadow: none;
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, .55));
+  }
+
+  .rainbow-text {
+    background-image: linear-gradient(90deg, #ff0033, #ff8a00, #ffe600, #2bff59, #00e5ff, #2b6bff, #b52bff, #ff0033);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: slide 2.6s linear infinite;
   }
 
   .btn {
     position: relative;
     border: 0;
     cursor: pointer;
-    padding: 22px 56px;
+    padding: 22px 58px;
     border-radius: 18px;
     background: #e00024;
     color: #fff;
     font-family: inherit;
-    font-size: clamp(1.1rem, 5vw, 1.6rem);
+    font-size: clamp(1.05rem, 4.8vw, 1.5rem);
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: .14em;
     text-transform: uppercase;
-    box-shadow: 0 0 0 2px #ff2b4a inset, 0 12px 40px rgba(224, 0, 36, .5);
-    transition: transform .1s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow: 0 0 0 2px #ff2b4a inset, 0 12px 42px rgba(224, 0, 36, .55);
+    transition: transform .1s ease, background .25s ease, box-shadow .3s ease, padding .25s ease;
   }
 
   .btn:hover { background: #ff0033; }
   .btn:active { transform: scale(.95); }
   .btn:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 
-  .btn.shake {
-    animation: shake .42s ease;
+  .btn.rainbow {
+    background-image: linear-gradient(90deg, #ff0033, #ff8a00, #ffe600, #2bff59, #00e5ff, #2b6bff, #b52bff, #ff0033);
+    background-size: 300% 100%;
+    animation: slide 2.6s linear infinite;
+    color: #000;
+    text-shadow: none;
+    box-shadow: 0 0 0 2px #ffffff55 inset, 0 0 46px rgba(255, 255, 255, .35);
   }
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0) rotate(0); }
-    15% { transform: translateX(-10px) rotate(-2deg); }
-    30% { transform: translateX(9px) rotate(2deg); }
-    45% { transform: translateX(-7px) rotate(-1.5deg); }
-    60% { transform: translateX(6px) rotate(1.5deg); }
-    80% { transform: translateX(-3px) rotate(-.5deg); }
+  @keyframes slide {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
   }
 
-  .glow {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 50% 45%, rgba(255, 0, 51, .16), transparent 62%);
-    opacity: 0;
-    transition: opacity .4s ease;
+  .counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: 4px;
   }
 
-  .glow.on { opacity: 1; }
+  .counter .label {
+    color: #565656;
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+  }
 
-  body.flash { animation: flash .35s ease; }
+  .counter .num {
+    color: #ff0033;
+    font-size: clamp(1.6rem, 8vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-shadow: 0 0 18px rgba(255, 0, 51, .75);
+    font-variant-numeric: tabular-nums;
+  }
 
-  @keyframes flash {
-    0% { background: #1a0006; }
-    100% { background: #000; }
+  .bar {
+    width: min(320px, 74vw);
+    height: 4px;
+    border-radius: 99px;
+    background: #1b1b1b;
+    overflow: hidden;
+  }
+
+  .bar i {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #8a0018, #ff0033, #ff6b00);
+    transition: width .25s ease;
   }
 
   .hint {
     position: fixed;
-    bottom: 18px;
+    bottom: 16px;
     left: 0;
     right: 0;
     text-align: center;
-    color: #3a3a3a;
-    font-size: 12px;
-    letter-spacing: .2em;
+    color: #333;
+    font-size: 11px;
+    letter-spacing: .22em;
     text-transform: uppercase;
   }
 </style>
 </head>
 <body>
 
-<div class="glow" id="glow"></div>
+<div class="topbar">
+  <span>не нажимай</span>
+  <button class="mute" id="mute" type="button">звук: вкл</button>
+</div>
 
 <div class="stage">
   <h1 id="msg" aria-live="assertive"></h1>
@@ -132,53 +214,289 @@
 
 <button class="btn" id="btn" type="button">Нажать</button>
 
-<div class="hint">не нажимай</div>
+<div class="counter">
+  <span class="label">нажатий</span>
+  <span class="num" id="num">0</span>
+</div>
+
+<div class="bar"><i id="fill"></i></div>
+
+<div class="hint">остановиться можно в любой момент. но ты не остановишься</div>
 
 <script>
-  const TARGET = "https://gareevemil12.github.io/maksim-osvobozhdenie/";
-  const MESSAGES = [
-    "ОШИБКА",
-    "ну сказано же было ОШИБКА!"
+(function () {
+  "use strict";
+
+  /* ---------- тексты по ступеням ---------- */
+
+  var STAGES = [
+    { from: 3,    msg: "ВОТ ТЕПЕРЬ БУДЕТ БОЛЬНО" },
+    { from: 4,    msg: "ты серьёзно продолжаешь?" },
+    { from: 6,    msg: "я же просил" },
+    { from: 8,    msg: "кнопка уже устала" },
+    { from: 10,   msg: "10. юбилей. поздравляю" },
+    { from: 15,   msg: "это уже диагноз" },
+    { from: 20,   msg: "20 нажатий. звук выключать не будем" },
+    { from: 30,   msg: "30. уши ещё живы?" },
+    { from: 40,   msg: "соседи уже ненавидят тебя" },
+    { from: 50,   msg: "50. половина сотни. остановись" },
+    { from: 75,   msg: "75. ты правда это делаешь" },
+    { from: 100,  msg: "100 НАЖАТИЙ. ты упорный" },
+    { from: 150,  msg: "150. кнопка подала в суд" },
+    { from: 200,  msg: "200. тут уже нечего нажимать" },
+    { from: 250,  msg: "250. врачи не рекомендуют" },
+    { from: 300,  msg: "300. ЭТО СПАРТА" },
+    { from: 350,  msg: "350. я начинаю уважать тебя" },
+    { from: 400,  msg: "400. время идёт, а ты жмёшь" },
+    { from: 450,  msg: "450. звук стал громче. извини" },
+    { from: 500,  msg: "500. экватор безумия" },
+    { from: 550,  msg: "550. я забыл, зачем это начал" },
+    { from: 600,  msg: "600. где-то плачет один разработчик" },
+    { from: 650,  msg: "650. кнопка уже не кнопка" },
+    { from: 700,  msg: "700. осталось 300" },
+    { from: 750,  msg: "750. пальцу нужен отпуск" },
+    { from: 800,  msg: "800. финишная прямая" },
+    { from: 850,  msg: "850. уже слышно финал" },
+    { from: 900,  msg: "900. ещё чуть-чуть" },
+    { from: 950,  msg: "950. дыши" },
+    { from: 975,  msg: "975. я волнуюсь" },
+    { from: 990,  msg: "990. почти всё" },
+    { from: 995,  msg: "995. пять шагов" },
+    { from: 999,  msg: "999. последний рубеж" },
+    { from: 1000, msg: "1000. ТЫ ДОШЁЛ. осталось одно нажатие" }
   ];
 
-  const msg = document.getElementById("msg");
-  const btn = document.getElementById("btn");
-  const glow = document.getElementById("glow");
+  var TOTAL = 1001;
 
-  let clicks = 0;
+  /* ---------- элементы ---------- */
 
-  function render(index) {
-    msg.classList.remove("show", "small");
-    // force reflow so the animation replays on every click
-    void msg.offsetWidth;
-    msg.textContent = MESSAGES[index];
-    msg.classList.toggle("small", index === 1);
-    msg.classList.add("show");
-    glow.classList.add("on");
-    document.body.classList.remove("flash");
-    void document.body.offsetWidth;
-    document.body.classList.add("flash");
+  var msgEl = document.getElementById("msg");
+  var btnEl = document.getElementById("btn");
+  var numEl = document.getElementById("num");
+  var fillEl = document.getElementById("fill");
+  var muteEl = document.getElementById("mute");
+
+  var clicks = 0;
+  var ended = false;
+
+  /* ---------- анимации ---------- */
+
+  function show(text, opts) {
+    opts = opts || {};
+    msgEl.classList.remove("show", "small", "ending", "rainbow-text");
+    void msgEl.offsetWidth;
+    msgEl.textContent = text;
+    if (opts.small) msgEl.classList.add("small");
+    if (opts.ending) msgEl.classList.add("ending", "rainbow-text");
+    msgEl.classList.add("show");
   }
 
-  function shake() {
-    btn.classList.remove("shake");
-    void btn.offsetWidth;
-    btn.classList.add("shake");
+  function bump(strength) {
+    if (!document.body.animate) return;
+    var frames = [];
+    for (var i = 0; i <= 6; i++) {
+      var d = strength * (1 - i / 6);
+      frames.push({
+        transform: "translate(" + (Math.random() * 2 - 1) * d + "px," +
+                   (Math.random() * 2 - 1) * d + "px) rotate(" +
+                   (Math.random() * 2 - 1) * d * 0.08 + "deg)"
+      });
+    }
+    frames.push({ transform: "translate(0,0) rotate(0)" });
+    document.body.animate(frames, { duration: 150 + strength * 22, easing: "ease-out" });
+    if (navigator.vibrate) navigator.vibrate(Math.min(40, 8 + strength * 2));
   }
 
-  btn.addEventListener("click", () => {
+  /* ---------- звук: намеренно отвратительный ---------- */
+
+  var ctx = null, master = null, soundOn = true, audioStarted = false, screechTimer = null;
+
+  function driveCurve(k) {
+    var n = 4096, curve = new Float32Array(n);
+    for (var i = 0; i < n; i++) {
+      var x = (i * 2) / n - 1;
+      curve[i] = ((1 + k) * x) / (1 + k * Math.abs(x));
+    }
+    return curve;
+  }
+
+  function startAudio() {
+    if (audioStarted) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    audioStarted = true;
+
+    try { ctx = new AC(); } catch (e) { audioStarted = false; return; }
+    if (ctx.state === "suspended") ctx.resume();
+
+    master = ctx.createGain();
+    master.gain.value = 0.0001;
+
+    var shaper = ctx.createWaveShaper();
+    shaper.curve = driveCurve(28);
+    shaper.oversample = "4x";
+
+    var hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 220;
+
+    var lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 6500;
+
+    master.connect(shaper);
+    shaper.connect(hp);
+    hp.connect(lp);
+    lp.connect(ctx.destination);
+
+    // полутоновый кластер + визгливая вышка + гудящий низ
+    var voices = [
+      [987.77, "sawtooth", 0.15],
+      [1046.50, "sawtooth", 0.15],
+      [1396.91, "square", 0.05],
+      [2793.00, "square", 0.035],
+      [110.00, "sawtooth", 0.13],
+      [116.54, "sawtooth", 0.10]
+    ];
+
+    voices.forEach(function (v, i) {
+      var o = ctx.createOscillator();
+      o.type = v[1];
+      o.frequency.value = v[0];
+      o.detune.value = (i % 2 ? 11 : -11);
+
+      var g = ctx.createGain();
+      g.gain.value = v[2];
+
+      o.connect(g);
+      g.connect(master);
+
+      var lfo = ctx.createOscillator();
+      lfo.frequency.value = 4.5 + i * 1.7;
+      var lfoGain = ctx.createGain();
+      lfoGain.gain.value = 9 + i * 5;
+      lfo.connect(lfoGain);
+      lfoGain.connect(o.detune);
+
+      o.start();
+      lfo.start();
+    });
+
+    master.gain.setValueAtTime(0.0001, ctx.currentTime);
+    master.gain.exponentialRampToValueAtTime(soundOn ? 0.13 : 0.0001, ctx.currentTime + 2.2);
+
+    tickScreech();
+    updateMuteLabel();
+  }
+
+  function tickScreech() {
+    if (ctx && soundOn && !ended) {
+      var t = ctx.currentTime;
+      var o = ctx.createOscillator();
+      o.type = Math.random() < 0.5 ? "sawtooth" : "square";
+      var f0 = 1500 + Math.random() * 2400;
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(Math.min(6200, f0 * 1.9), t + 0.24);
+
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.055, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+
+      o.connect(g);
+      g.connect(master);
+      o.start(t);
+      o.stop(t + 0.34);
+    }
+    screechTimer = setTimeout(tickScreech, 650 + Math.random() * 1500);
+  }
+
+  function nudgeSound(level) {
+    if (!ctx || !soundOn || ended) return;
+    var t = ctx.currentTime;
+    var o = ctx.createOscillator();
+    o.type = "square";
+    o.frequency.setValueAtTime(2200 + (level % 20) * 55, t);
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.03, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+    o.connect(g);
+    g.connect(master);
+    o.start(t);
+    o.stop(t + 0.1);
+  }
+
+  function updateMuteLabel() {
+    muteEl.classList.add("on");
+    muteEl.textContent = soundOn ? "звук: вкл" : "звук: выкл";
+  }
+
+  muteEl.addEventListener("click", function (e) {
+    e.stopPropagation();
+    soundOn = !soundOn;
+    updateMuteLabel();
+    if (ctx && !ended) {
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setTargetAtTime(soundOn ? 0.13 : 0.0001, ctx.currentTime, 0.25);
+    }
+  });
+
+  function stopAudio() {
+    if (!ctx) return;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setTargetAtTime(0.0001, ctx.currentTime, 1.1);
+    clearTimeout(screechTimer);
+  }
+
+  /* ---------- финал ---------- */
+
+  function finish() {
+    ended = true;
+    stopAudio();
+    show("Конец пока мистер бист каратист", { ending: true });
+    btnEl.classList.add("rainbow");
+    btnEl.textContent = "финиш";
+    document.documentElement.style.setProperty("--tint", "1");
+    fillEl.style.width = "100%";
+    bump(9);
+  }
+
+  /* ---------- клик ---------- */
+
+  function handle() {
+    if (ended) { bump(3); return; }
+
     clicks += 1;
+    numEl.textContent = clicks;
+    fillEl.style.width = Math.min(100, (clicks / 1000) * 100) + "%";
 
-    if (clicks <= MESSAGES.length) {
-      render(clicks - 1);
-      shake();
-      return;
+    if (clicks >= TOTAL) { finish(); return; }
+
+    var stage = STAGES[0];
+    for (var i = 0; i < STAGES.length; i++) {
+      if (clicks >= STAGES[i].from) stage = STAGES[i];
     }
 
-    // третий клик — уходим по ссылке
-    msg.textContent = "ПЕРЕХОД...";
-    window.location.href = TARGET;
-  });
+    if (clicks === 1) {
+      show("ОШИБКА");
+    } else if (clicks === 2) {
+      show("ну сказано же было ОШИБКА!", { small: true });
+    } else {
+      show(stage.msg, { small: true });
+    }
+
+    if (clicks === 3) startAudio();
+    if (clicks > 3) nudgeSound(clicks);
+
+    document.documentElement.style.setProperty(
+      "--tint", (Math.min(1, (clicks - 1) / 1000) * 0.9).toFixed(3)
+    );
+    bump(3 + Math.min(9, clicks / 90));
+  }
+
+  btnEl.addEventListener("click", handle);
+})();
 </script>
 
 </body>
